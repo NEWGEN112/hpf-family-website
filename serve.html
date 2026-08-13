@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Serve & Start an HPF Altar</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f1e8;color:#171512;font-family:Arial,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:30px 6% 80px}.nav{display:flex;justify-content:space-between;align-items:center;padding:15px 0 35px}
+.nav a{color:#171512;text-decoration:none;font-size:13px;margin-left:20px}.brand{font-weight:800;letter-spacing:.08em}
+.hero{padding:50px 0}.eyebrow{font-size:10px;letter-spacing:.2em;font-weight:800;color:#8c6b2d}
+h1{font-family:Georgia,serif;font-size:clamp(48px,7vw,88px);line-height:.95;margin:15px 0 25px}h1 em{font-weight:400}
+.lead{font-size:18px;line-height:1.7;max-width:750px;color:#625d54}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:30px 0}.tab{padding:22px;border:1px solid #cfc5b5;background:#fffaf0;cursor:pointer}.tab.active{background:#171512;color:white}.tab b{font-size:16px}.tab p{font-size:12px;line-height:1.5;opacity:.7}
+.formbox{background:#fffaf0;border:1px solid #d2c7b5;padding:35px;margin-top:20px}.formbox h2{font-family:Georgia,serif;font-size:36px;margin-top:0}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.full{grid-column:1/-1}label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}input,select,textarea{width:100%;display:block;margin-top:7px;padding:14px;border:1px solid #bdb3a1;background:white;font:inherit}textarea{min-height:120px;resize:vertical}
+button{border:0;background:#d5a943;color:#171512;padding:15px 22px;font-weight:800;cursor:pointer;margin-top:8px}.note{font-size:12px;color:#777;line-height:1.6}.success{display:none;margin-top:20px;padding:18px;background:#e8f0df;border-left:4px solid #718c4d}.wa{display:inline-block;background:#171512;color:#fff;text-decoration:none;padding:12px 18px;font-size:12px;font-weight:800;margin-top:10px}
+@media(max-width:700px){.tabs,.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.nav{align-items:flex-start}.nav nav{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="nav"><a class="brand" href="index.html">🔥 HPF FAMILY</a><nav><a href="index.html">Home</a><a href="family.html">Family</a><a href="member.html">Join HPF</a><a href="programs.html">Programs</a><a target="_blank" rel="noopener" href="https://incredible-gecko-e48a13.netlify.app/">Spiritual Growth App ↗</a><a href="resources.html">Resources</a></nav></header>
+<section class="hero">
+<div class="eyebrow">SERVE • PLANT • BUILD</div>
+<h1>There is a place<br>for <em>you</em> in HPF.</h1>
+<p class="lead">Whether you want to serve as an HPF executive or raise an altar of prayer in your hostel, begin here. Your request will be prepared for follow-up by the HPF General Secretary.</p>
+</section>
+<div class="tabs">
+<div class="tab active" data-form="executive"><b>01 — Serve as an HPF Executive</b><p>Express your interest in leadership and service within HPF.</p></div>
+<div class="tab" data-form="hostel"><b>02 — Start a Hostel Prayer Altar</b><p>Tell us about your hostel and the prayer fellowship you want to begin.</p></div>
+</div>
+
+<form id="executive" class="formbox hpf-form">
+<h2>Executive Service Interest</h2><p class="note">This is an expression of interest, not an automatic appointment. HPF leadership will review and contact you.</p>
+<div class="formgrid">
+<label>Full name<input required name="name"></label>
+<label>WhatsApp number<input required name="phone" placeholder="e.g. 08012345678"></label>
+<label>Campus<input required name="campus"></label>
+<label>Department / Course<input name="department"></label>
+<label>Level<input name="level" placeholder="e.g. 300L"></label>
+<label>Hostel<input name="hostel"></label>
+<label>Preferred service area<select name="service"><option>Evangelism</option><option>Prayer / Intercession</option><option>Discipleship</option><option>Worship</option><option>Media</option><option>Drama / Creative Arts</option><option>Welfare</option><option>Academic / Mentorship</option><option>Other</option></select></label>
+<label class="full">Why do you want to serve in HPF?<textarea required name="reason"></textarea></label>
+</div>
+<button type="submit">Submit Executive Interest ↗</button><div class="success"></div>
+</form>
+
+<form id="hostel" class="formbox hpf-form" style="display:none">
+<h2>Start a Hostel Prayer Altar</h2><p class="note">We want to help you raise an HPF altar where you are. Share the details below and the General Secretary can follow up.</p>
+<div class="formgrid">
+<label>Contact person<input required name="name"></label>
+<label>WhatsApp number<input required name="phone"></label>
+<label>Hostel name<input required name="hostel"></label>
+<label>Campus / Location<input required name="campus"></label>
+<label>Estimated interested people<input type="number" min="1" name="people"></label>
+<label>Preferred prayer day<input name="day" placeholder="e.g. Thursday"></label>
+<label class="full">Tell us about the hostel / plan<textarea required name="message"></textarea></label>
+</div>
+<button type="submit">Request Hostel Altar Support ↗</button><div class="success"></div>
+</form>
+
+<section style="margin-top:55px;padding:28px 0;border-top:1px solid #d0c5b3">
+<div class="eyebrow">DIRECT CONTACT</div><h2 style="font-family:Georgia,serif;font-size:32px">Need to speak with the General Secretary?</h2>
+<p class="note">For executive service, starting an HPF altar, or any HPF information, WhatsApp the General Secretary on <b>09164958696</b>.</p>
+<a class="wa" target="_blank" href="https://wa.me/2349164958696?text=Hello%20HPF%20General%20Secretary%2C%20I%20would%20like%20to%20make%20an%20HPF%20enquiry.">WhatsApp General Secretary ↗</a>
+</section>
+</div>
+<script>
+const tabs=document.querySelectorAll('.tab'), forms=document.querySelectorAll('.hpf-form');
+tabs.forEach(t=>t.onclick=()=>{tabs.forEach(x=>x.classList.remove('active'));t.classList.add('active');forms.forEach(f=>f.style.display=f.id===t.dataset.form?'block':'none')});
+forms.forEach(form=>form.onsubmit=async e=>{
+ e.preventDefault(); const d=Object.fromEntries(new FormData(form)); d.kind=form.id;
+ const box=form.querySelector('.success');
+ try{
+   const r=await fetch('/api/applications',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
+   const j=await r.json(); if(!r.ok) throw new Error(j.error||'Could not submit');
+   box.style.display='block'; box.innerHTML='<b>Request received by HPF Family ✓</b><br>Your request has been recorded. For immediate follow-up, you can also WhatsApp the General Secretary.<br><a class="wa" target="_blank" href="https://wa.me/2349164958696?text='+encodeURIComponent('Hello HPF General Secretary, I just submitted a '+(form.id==='executive'?'Executive Service':'Hostel Prayer Altar')+' request through the HPF Family website. My name is '+d.name+'. Please guide me on the next step.')+'">WhatsApp General Secretary ↗</a>';
+ }catch(err){
+   box.style.display='block'; box.innerHTML='<b>WhatsApp follow-up</b><br>The live server is not running in this local copy yet. Please send your request directly to the General Secretary.<br><a class="wa" target="_blank" href="https://wa.me/2349164958696?text='+encodeURIComponent('Hello HPF General Secretary, I would like to make an HPF '+(form.id==='executive'?'Executive Service':'Hostel Prayer Altar')+' request. My name is '+d.name+'. Please guide me.')+'">Send to General Secretary ↗</a>';
+ }
+});
+</script>
+</body></html>

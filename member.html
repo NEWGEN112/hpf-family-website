@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Join HPF Family</title><style>
+body{margin:0;background:#f4f0e7;color:#171512;font-family:Arial,sans-serif}.wrap{max-width:1050px;margin:auto;padding:30px 6% 70px}.nav{display:flex;justify-content:space-between}.nav a{color:#171512;text-decoration:none;margin-left:18px;font-size:12px}.brand{font-weight:900}.hero{padding:60px 0 35px}.ey{font-size:10px;letter-spacing:.2em;color:#8c6b2d;font-weight:800}h1,h2{font-family:Georgia,serif}h1{font-size:clamp(48px,7vw,82px);line-height:.94;margin:14px 0}.lead{max-width:700px;color:#69625a;line-height:1.7}.box{background:#fffaf0;border:1px solid #d0c5b4;padding:32px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}label{font-size:10px;text-transform:uppercase;font-weight:800}input,select{display:block;width:100%;margin-top:7px;padding:13px;border:1px solid #bdb3a3;box-sizing:border-box;background:#fff;font:inherit}.full{grid-column:1/-1}button{background:#d5a943;border:0;padding:15px 22px;font-weight:800;margin-top:18px}.msg{margin-top:18px;padding:15px;display:none}.ok{background:#e6efdc}.err{background:#f5dede}.login{margin-top:30px;padding:25px;background:#111;color:#fff}.login a{color:#d5a943}.dash{display:none;margin-top:30px;background:#111;color:#fff;padding:30px}.dashgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.card{border:1px solid #3a362f;padding:20px}.card b{color:#d5a943;font-size:10px;letter-spacing:.12em}.btn{display:inline-block;background:#d5a943;color:#111;text-decoration:none;padding:12px 16px;font-size:11px;font-weight:800;margin-top:10px}@media(max-width:700px){.grid,.dashgrid{grid-template-columns:1fr}.full{grid-column:auto}.nav nav{display:none}}
+</style></head><body><div class="wrap">
+<header class="nav"><a class="brand" href="index.html">🔥 HPF FAMILY</a><nav><a href="index.html">Home</a><a href="family.html">Family</a><a href="programs.html">Programs</a><a href="login.html">Login</a></nav></header>
+<section class="hero"><div class="ey">JOIN THE FAMILY</div><h1>Create your<br>HPF identity.</h1><p class="lead">Create a secure HPF member account. Your profile will become your connection point to the HPF Family and your spiritual growth journey.</p></section>
+<form class="box" id="reg"><h2>HPF Member Registration</h2><div class="grid">
+<label>Full name<input required name="name"></label><label>WhatsApp number<input required name="phone"></label>
+<label>Email<input type="email" name="email"></label><label>Gender<select name="gender"><option value="">Select</option><option>Male</option><option>Female</option></select></label>
+<label>Campus / Chapter<input required name="campus"></label><label>Hostel<input name="hostel"></label>
+<label>Department / Course<input name="department"></label><label>Level<input name="level"></label>
+<label>HPF connection<select required name="connection"><option>New member</option><option>Current member</option><option>Alumnus / Alumna</option><option>Volunteer</option><option>Partner</option></select></label>
+<label>Service area<select name="service"><option>Not yet decided</option><option>Evangelism</option><option>Prayer / Intercession</option><option>Discipleship</option><option>Worship</option><option>Media</option><option>Drama / Creative Arts</option><option>Welfare</option></select></label>
+<label class="full">Create password (8+ characters)<input required minlength="8" type="password" name="password"></label>
+</div><button>Create Secure HPF Account ↗</button><div id="msg" class="msg"></div></form>
+<div class="login">Already have an account? <a href="login.html">Log in to HPF Family →</a></div>
+<section class="dash" id="dash"><div class="ey">MEMBER HOME</div><h2 id="welcome"></h2><div class="dashgrid">
+<div class="card"><b>SPIRITUAL GROWTH</b><p>Continue your spiritual journey.</p><a class="btn" target="_blank" href="https://incredible-gecko-e48a13.netlify.app/">Open Growth App ↗</a></div>
+<div class="card"><b>HPF FAMILY</b><p id="meta"></p><a class="btn" href="family.html">Explore Family ↗</a></div>
+<div class="card"><b>SERVE</b><p>Serve as an executive or help plant an HPF altar.</p><a class="btn" href="serve.html">Serve in HPF ↗</a></div>
+</div></section>
+</div>
+<script>
+const form=document.getElementById('reg'),msg=document.getElementById('msg');
+form.onsubmit=async e=>{e.preventDefault();msg.className='msg';msg.style.display='block';msg.textContent='Creating your secure account...';try{const r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(form)))});const j=await r.json();if(!r.ok)throw Error(j.error);msg.className='msg ok';msg.textContent='Welcome to the HPF Family, '+j.member.name+'! Your secure account is ready.';show(j.member);setTimeout(()=>location.href='dashboard.html',900)}catch(e){msg.className='msg err';msg.textContent=e.message||'The live server is not connected yet. Please deploy the backend first.'}};
+function show(m){document.getElementById('dash').style.display='block';document.getElementById('welcome').textContent='Welcome, '+m.name.split(' ')[0]+'. 🔥';document.getElementById('meta').textContent=[m.campus,m.hostel,m.connection].filter(Boolean).join(' · ')}
+</script></body></html>

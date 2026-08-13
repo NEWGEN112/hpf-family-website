@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My HPF Family Dashboard</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3eee4;color:#171512;font-family:Arial,sans-serif}.wrap{max-width:1180px;margin:auto;padding:25px 5% 70px}
+nav{display:flex;justify-content:space-between;align-items:center;padding-bottom:30px}.brand{font-weight:900;letter-spacing:.06em;color:#171512;text-decoration:none}nav a{font-size:12px;color:#171512;text-decoration:none;margin-left:18px}
+.hero{background:#151412;color:#fff;padding:42px;margin-bottom:20px}.ey{font-size:10px;letter-spacing:.2em;color:#d6aa4b;font-weight:800}.hero h1{font:clamp(45px,6vw,72px) Georgia,serif;line-height:.95;margin:12px 0}.hero p{color:#bdb7ae;line-height:1.6}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:#fffaf1;border:1px solid #d1c5b3;padding:25px;min-height:180px}.wide{grid-column:span 2}.card b{font-size:10px;letter-spacing:.15em;color:#8b692b}.card h2{font:28px Georgia,serif;margin:12px 0}.card p{font-size:13px;color:#686159;line-height:1.6}.btn{display:inline-block;background:#d5a943;color:#171512;text-decoration:none;padding:12px 16px;font-size:11px;font-weight:800;margin-top:5px}.dark{background:#151412;color:#fff;border-color:#151412}.dark p{color:#bdb7ae}.profile{display:flex;gap:15px;align-items:center}.avatar{width:58px;height:58px;border-radius:50%;background:#d5a943;display:grid;place-items:center;font-weight:900}.empty{padding:20px;background:#eee7da;color:#71695f;font-size:12px}@media(max-width:760px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}nav nav{display:none}}
+</style></head><body><div class="wrap">
+<nav><a class="brand" href="index.html">🔥 HPF FAMILY</a><div><a href="family.html">Family</a><a href="programs.html">Programs</a><a href="serve.html">Serve</a><a href="#" id="logout">Logout</a></div></nav>
+<section class="hero"><div class="ey">MY HPF FAMILY</div><div class="profile"><div class="avatar" id="avatar">H</div><div><h1 id="welcome">Welcome.</h1><p id="meta">Loading your HPF profile...</p></div></div></section>
+<div class="grid">
+<section class="card wide dark"><b>🔥 SPIRITUAL GROWTH</b><h2>Continue your journey.</h2><p>Your HPF Growth App is your daily companion for intentionally building your spiritual life. Keep praying, studying the Word, fasting and growing.</p><a class="btn" target="_blank" href="https://incredible-gecko-e48a13.netlify.app/">OPEN HPF GROWTH APP ↗</a></section>
+<section class="card"><b>👤 MY PROFILE</b><h2>My HPF Identity</h2><p id="profile">Loading...</p><a class="btn" href="member.html">UPDATE PROFILE ↗</a></section>
+<section class="card"><b>🏠 MY FELLOWSHIP</b><h2>My Chapter</h2><p id="fellowship">Your campus and hostel fellowship will appear here.</p><a class="btn" href="family.html">EXPLORE FAMILY ↗</a></section>
+<section class="card"><b>📖 DISCIPLESHIP</b><h2>Keep Growing</h2><p>Your discipleship pathway will be connected here as HPF's digital discipleship system develops.</p><a class="btn" href="resources.html">VIEW RESOURCES ↗</a></section>
+<section class="card"><b>📅 PROGRAMS</b><h2>Stay Connected</h2><p>Don't miss HPF programs, prayer meetings, worship gatherings and family events.</p><a class="btn" href="programs.html">SEE PROGRAMS ↗</a></section>
+<section class="card"><b>👑 SERVE</b><h2>Make Impact</h2><p>Interested in executive service or helping establish a Hostel Prayer Fellowship?</p><a class="btn" href="serve.html">SERVE / START AN ALTAR ↗</a></section>
+<section class="card wide"><b>🙏 PRAYER & TESTIMONY</b><h2>A family that prays together.</h2><p>Prayer requests and testimonies will become part of the member experience here. For now, connect directly with the HPF General Secretary for support and guidance.</p><a class="btn" target="_blank" href="https://wa.me/2349164958696?text=Hello%20HPF%20General%20Secretary%2C%20I%20need%20support%20with%20my%20HPF%20journey.">CONTACT GENERAL SECRETARY ↗</a></section>
+
+<section class="card wide"><b>📢 HPF ANNOUNCEMENTS</b><div id="announcements" class="empty">Loading announcements...</div></section>
+<section class="card wide"><b>📅 UPCOMING PROGRAMS</b><div id="programs" class="empty">Loading programs...</div></section>
+<section class="card"><b>🙏 PRAYER REQUEST</b><textarea id="prayer" style="width:100%;min-height:100px;margin-top:15px"></textarea><button class="btn" onclick="sendPrayer()">SEND PRAYER REQUEST ↗</button><div id="pm"></div></section>
+<section class="card"><b>❤️ TESTIMONY</b><input id="tt" placeholder="Testimony title" style="width:100%;padding:12px;margin:15px 0 8px;box-sizing:border-box"><textarea id="ts" placeholder="Share what God has done..." style="width:100%;min-height:100px"></textarea><button class="btn" onclick="sendTestimony()">SUBMIT TESTIMONY ↗</button><div id="tm"></div></section>
+</div></div>
+<script>
+(async()=>{
+ try{
+  const r=await fetch('/api/me'); if(!r.ok){location.href='login.html';return}
+  const j=await r.json(),m=j.member;
+  document.getElementById('welcome').textContent='Welcome, '+m.name.split(' ')[0]+'.';
+  document.getElementById('avatar').textContent=m.name.charAt(0).toUpperCase();
+  document.getElementById('meta').textContent=[m.campus,m.hostel,m.connection].filter(Boolean).join(' · ');
+  document.getElementById('profile').textContent=[m.name,m.phone,m.department,m.level].filter(Boolean).join(' · ');
+  document.getElementById('fellowship').textContent=[m.campus,m.hostel].filter(Boolean).join(' · ')||'Your fellowship information will appear here.';
+ }catch(e){location.href='login.html'}
+})();
+async function loadCommunity(){
+ try{
+  const a=await (await fetch('/api/announcements')).json(); document.getElementById('announcements').innerHTML=a.items.length?a.items.map(x=>`<div style="padding:12px 0;border-bottom:1px solid #ddd"><b>${x.title}</b><p>${x.body}</p></div>`).join(''):'No announcements yet.';
+  const p=await (await fetch('/api/programs')).json(); document.getElementById('programs').innerHTML=p.items.length?p.items.map(x=>`<div style="padding:12px 0;border-bottom:1px solid #ddd"><b>${x.title}</b><p>${x.date||''} ${x.time||''} · ${x.venue||''}</p><small>${x.description||''}</small></div>`).join(''):'No programs posted yet.';
+ }catch(e){}
+}
+async function sendPrayer(){const v=document.getElementById('prayer').value;if(!v)return;const r=await fetch('/api/prayer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({request:v})});document.getElementById('pm').textContent=r.ok?'Prayer request received. 🙏':'Please log in again.'}
+async function sendTestimony(){const title=document.getElementById('tt').value,story=document.getElementById('ts').value;if(!title||!story)return;const r=await fetch('/api/testimony',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,story})});document.getElementById('tm').textContent=r.ok?'Testimony submitted for review. ❤️':'Please log in again.'}
+loadCommunity();
+document.getElementById('logout').onclick=async e=>{e.preventDefault();await fetch('/api/logout',{method:'POST'});location.href='login.html'};
+</script></body></html>
