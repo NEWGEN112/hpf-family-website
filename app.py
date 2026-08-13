@@ -262,7 +262,7 @@ def forgot_password():
         })
     except Exception as e:
         print("Email error:", e)
-        return jsonify(error="Could not send email. Please try again later."), 500
+        return jsonify(error=f"Email error: {str(e)}"), 500
 
     return jsonify(ok=True, message="If an account exists, a reset link has been sent to your email.")
 
