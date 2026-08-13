@@ -335,18 +335,34 @@ def make_admin_now():
                 cur.execute("""
                     UPDATE members 
                     SET role = 'admin', 
+                        password_hash = %s,
                         name = %s,
                         campus = %s,
                         connection = %s
                     WHERE phone = %s
                 """, (
+                    hp("HPFFAMILY001"),
                     "HPFFAMILY",
                     "HPF Family",
                     "HPF Leadership",
                     "07025329640"
                 ))
+                if cur.rowcount == 0:
+                    cur.execute("""
+                        INSERT INTO members (name, phone, email, campus, connection, password_hash, role, created_at)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    """, (
+                        "HPFFAMILY",
+                        "07025329640",
+                        None,
+                        "HPF Family",
+                        "HPF Leadership",
+                        hp("HPFFAMILY001"),
+                        "admin",
+                        datetime.utcnow().isoformat()
+                    ))
                 conn.commit()
-        return "SUCCESS! Admin is ready. Login with phone 09157227521 and password HPFFAMILY001"
+        return "SUCCESS! Admin ready. Login with 07025329640 / HPFFAMILY001"
     except Exception as e:
         return f"Error: {str(e)}"
 
