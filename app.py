@@ -339,10 +339,34 @@ def home():
 def static_file(path):
     return send_from_directory(BASE, path)
 
-# Create tables on startup
+# Create tables on startup and seed admin
 with app.app_context():
     if DATABASE_URL:
         init_db()
+        # Seed Admin Account (one-time)
+        try:
+            with get_db() as conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT id FROM members WHERE phone = %s", ("07025329640",))
+                    existing = cur.fetchone()
+                    if not existing:
+                        cur.execute("""
+                            INSERT INTO members (name, phone, email, campus, connection, password_hash, role, created_at)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        """, (
+                            "HPFFAMILY",
+                            "07025329640",
+                            None,
+                            "HPF Family",
+                            "HPF Leadership",
+                            hp("HPFFAMILY001"),
+                            "admin",
+                            datetime.utcnow().isoformat()
+                        ))
+                        conn.commit()
+                        print("Admin account created successfully")
+        except Exception as e:
+            print("Admin seed error:", e)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
