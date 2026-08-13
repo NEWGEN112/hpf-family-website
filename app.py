@@ -328,6 +328,7 @@ def add_program():
     return jsonify(ok=True), 201
 
 @app.get("/make-admin-now-hpf2026")
+@app.get("/make-admin-now-hpf2026")
 def make_admin_now():
     try:
         with get_db() as conn:
