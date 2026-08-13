@@ -343,13 +343,30 @@ def static_file(path):
 with app.app_context():
     if DATABASE_URL:
         init_db()
-        # Seed Admin Account (one-time)
+        # Seed / Update Admin Account
         try:
             with get_db() as conn:
                 with conn.cursor() as cur:
                     cur.execute("SELECT id FROM members WHERE phone = %s", ("07025329640",))
                     existing = cur.fetchone()
-                    if not existing:
+                    if existing:
+                        # Update existing account to admin
+                        cur.execute("""
+                            UPDATE members 
+                            SET role = 'admin', 
+                                password_hash = %s, 
+                                name = %s,
+                                campus = %s,
+                                connection = %s
+                            WHERE phone = %s
+                        """, (
+                            hp("HPFFAMILY001"),
+                            "HPFFAMILY",
+                            "HPF Family",
+                            "HPF Leadership",
+                            "07025329640"
+                        ))
+                    else:
                         cur.execute("""
                             INSERT INTO members (name, phone, email, campus, connection, password_hash, role, created_at)
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -363,8 +380,8 @@ with app.app_context():
                             "admin",
                             datetime.utcnow().isoformat()
                         ))
-                        conn.commit()
-                        print("Admin account created successfully")
+                    conn.commit()
+                    print("Admin account ready")
         except Exception as e:
             print("Admin seed error:", e)
 
