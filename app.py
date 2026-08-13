@@ -32,7 +32,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS testimonies(id INTEGER PRIMARY KEY AUTOINCREMENT,member_id INTEGER,name TEXT NOT NULL,title TEXT NOT NULL,story TEXT NOT NULL,status TEXT DEFAULT 'pending',created_at TEXT NOT NULL);
     """) 
     with app.app_context():
-    init_db() 
+        init_db() 
 def hp(p,s=None):
     s=s or secrets.token_bytes(16); return s.hex()+":"+hashlib.pbkdf2_hmac("sha256",p.encode(),s,210000).hex()
 def check(p,stored):
