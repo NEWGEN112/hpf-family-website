@@ -218,59 +218,59 @@ def forgot_password():
     if not identity:
         return jsonify(error="Phone or email is required"), 400
 
-    with get_db() as conn:
+    conn = get_db()
+    try:
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM members WHERE phone = %s OR email = %s", (identity, identity))
             member = cur.fetchone()
 
-    if not member:
-        # Don't reveal if the account exists
-        return jsonify(ok=True, message="If an account exists, a reset link has been sent.")
+        if not member:
+            return jsonify(ok=True, message="If an account exists, a reset link has been sent.")
 
-    # Generate secure token
-    token = secrets.token_urlsafe(32)
-    expires = (datetime.utcnow() + timedelta(hours=1)).isoformat()
+        # Make sure columns exist
+        with conn.cursor() as cur:
+            cur.execute("ALTER TABLE members ADD COLUMN IF NOT EXISTS reset_token TEXT")
+            cur.execute("ALTER TABLE members ADD COLUMN IF NOT EXISTS reset_expires TEXT")
+            conn.commit()
 
-    try:
-        with get_db() as conn:
-            with conn.cursor() as cur:
-                # Make sure columns exist
-                cur.execute("ALTER TABLE members ADD COLUMN IF NOT EXISTS reset_token TEXT")
-                cur.execute("ALTER TABLE members ADD COLUMN IF NOT EXISTS reset_expires TEXT")
-                cur.execute("UPDATE members SET reset_token = %s, reset_expires = %s WHERE id = %s",
-                            (token, expires, member["id"]))
-                conn.commit()
+        # Generate secure token
+        token = secrets.token_urlsafe(32)
+        expires = (datetime.utcnow() + timedelta(hours=1)).isoformat()
+
+        with conn.cursor() as cur:
+            cur.execute("UPDATE members SET reset_token = %s, reset_expires = %s WHERE id = %s",
+                        (token, expires, member["id"]))
+            conn.commit()
+
+        # Send email
+        reset_link = f"https://hpf-family-website.onrender.com/reset.html?token={token}"
+        email_to = member.get("email") or "hostelprayerfellowship001@gmail.com"
+
+        try:
+            resend.Emails.send({
+                "from": FROM_EMAIL,
+                "to": email_to,
+                "subject": "HPF Family - Password Reset",
+                "html": f"""
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
+                    <h2 style="color: #d5a943;">HPF Family Password Reset</h2>
+                    <p>Hello {member['name']},</p>
+                    <p>You requested a password reset for your HPF Family account.</p>
+                    <p><a href="{reset_link}" style="background:#d5a943;color:#111;padding:12px 20px;text-decoration:none;font-weight:bold;border-radius:4px;">Reset My Password</a></p>
+                    <p>Or copy this link:<br>{reset_link}</p>
+                    <p>This link expires in 1 hour.</p>
+                    <p>If you did not request this, please ignore this email.</p>
+                    <br>
+                    <p>Blessings,<br>HPF Family Team</p>
+                </div>
+                """
+            })
+        except Exception as e:
+            return jsonify(error=f"Email error: {str(e)}"), 500
+
+        return jsonify(ok=True, message="If an account exists, a reset link has been sent to your email.")
     except Exception as e:
-        return jsonify(error=f"Database error: {str(e)}"), 500
-
-    # Send email
-    reset_link = f"https://hpf-family-website.onrender.com/reset.html?token={token}"
-    email_to = member.get("email") or "hostelprayerfellowship001@gmail.com"
-
-    try:
-        resend.Emails.send({
-            "from": FROM_EMAIL,
-            "to": email_to,
-            "subject": "HPF Family - Password Reset",
-            "html": f"""
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
-                <h2 style="color: #d5a943;">HPF Family Password Reset</h2>
-                <p>Hello {member['name']},</p>
-                <p>You requested a password reset for your HPF Family account.</p>
-                <p><a href="{reset_link}" style="background:#d5a943;color:#111;padding:12px 20px;text-decoration:none;font-weight:bold;border-radius:4px;">Reset My Password</a></p>
-                <p>Or copy this link: {reset_link}</p>
-                <p>This link expires in 1 hour.</p>
-                <p>If you did not request this, please ignore this email.</p>
-                <br>
-                <p>Blessings,<br>HPF Family Team</p>
-            </div>
-            """
-        })
-    except Exception as e:
-        print("Email error:", e)
-        return jsonify(error=f"Email error: {str(e)}"), 500
-
-    return jsonify(ok=True, message="If an account exists, a reset link has been sent to your email.")
+        return jsonify(error=f"Server error: {str(e)}"), 500
 
 @app.post("/api/reset-password")
 def reset_password():
