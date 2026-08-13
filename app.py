@@ -144,8 +144,10 @@ def create_admin():
 def home():return send_from_directory(BASE,"index.html")
 @app.route("/<path:path>")
 def static_file(path):return send_from_directory(BASE,path)
-    with app.app_context():
+
+with app.app_context():
     init_db()
+
 if __name__=="__main__":
     import sys
     if len(sys.argv)>1 and sys.argv[1]=="create-admin":
