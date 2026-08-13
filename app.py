@@ -4,6 +4,7 @@ from functools import wraps
 from flask import Flask, request, jsonify, session, g, send_from_directory
 import psycopg
 from psycopg.rows import dict_row
+import resend
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 
@@ -17,6 +18,8 @@ app.config.update(
 )
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
+resend.api_key = os.environ.get("RESEND_API_KEY")
+FROM_EMAIL = os.environ.get("FROM_EMAIL", "onboarding@resend.dev")
 
 def get_db():
     if "db" not in g:
@@ -48,6 +51,8 @@ def init_db():
                 story TEXT,
                 password_hash TEXT NOT NULL,
                 role TEXT DEFAULT 'member',
+                reset_token TEXT,
+                reset_expires TEXT,
                 created_at TEXT NOT NULL
             );
             CREATE TABLE IF NOT EXISTS applications (
@@ -94,6 +99,12 @@ def init_db():
                 created_at TEXT NOT NULL
             );
             """)
+            # Add reset columns if they don't exist
+            try:
+                cur.execute("ALTER TABLE members ADD COLUMN IF NOT EXISTS reset_token TEXT")
+                cur.execute("ALTER TABLE members ADD COLUMN IF NOT EXISTS reset_expires TEXT")
+            except:
+                pass
             conn.commit()
 
 def hp(p, s=None):
@@ -113,6 +124,8 @@ def public(r):
         return None
     d = dict(r)
     d.pop("password_hash", None)
+    d.pop("reset_token", None)
+    d.pop("reset_expires", None)
     return d
 
 def auth(f):
@@ -154,19 +167,10 @@ def register():
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     RETURNING id
                 """, (
-                    d["name"].strip(),
-                    d["phone"].strip(),
-                    d.get("email") or None,
-                    d["campus"],
-                    d.get("hostel", ""),
-                    d.get("department", ""),
-                    d.get("level", ""),
-                    d.get("gender", ""),
-                    d["connection"],
-                    d.get("service", ""),
-                    d.get("story", ""),
-                    hp(d["password"]),
-                    datetime.utcnow().isoformat()
+                    d["name"].strip(), d["phone"].strip(), d.get("email") or None, d["campus"],
+                    d.get("hostel", ""), d.get("department", ""), d.get("level", ""), d.get("gender", ""),
+                    d["connection"], d.get("service", ""), d.get("story", ""),
+                    hp(d["password"]), datetime.utcnow().isoformat()
                 ))
                 new_id = cur.fetchone()["id"]
                 conn.commit()
@@ -206,6 +210,94 @@ def me():
             r = cur.fetchone()
     return jsonify(member=public(r))
 
+# ========== FORGOT / RESET PASSWORD ==========
+@app.post("/api/forgot-password")
+def forgot_password():
+    d = request.get_json(force=True)
+    identity = d.get("identity", "").strip()
+    if not identity:
+        return jsonify(error="Phone or email is required"), 400
+
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM members WHERE phone = %s OR email = %s", (identity, identity))
+            member = cur.fetchone()
+
+    if not member:
+        # Don't reveal if the account exists
+        return jsonify(ok=True, message="If an account exists, a reset link has been sent.")
+
+    # Generate secure token
+    token = secrets.token_urlsafe(32)
+    expires = (datetime.utcnow() + timedelta(hours=1)).isoformat()
+
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("UPDATE members SET reset_token = %s, reset_expires = %s WHERE id = %s",
+                        (token, expires, member["id"]))
+            conn.commit()
+
+    # Send email
+    reset_link = f"https://hpf-family-website.onrender.com/reset.html?token={token}"
+    email_to = member.get("email") or "hostelprayerfellowship001@gmail.com"
+
+    try:
+        resend.Emails.send({
+            "from": FROM_EMAIL,
+            "to": email_to,
+            "subject": "HPF Family - Password Reset",
+            "html": f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
+                <h2 style="color: #d5a943;">HPF Family Password Reset</h2>
+                <p>Hello {member['name']},</p>
+                <p>You requested a password reset for your HPF Family account.</p>
+                <p><a href="{reset_link}" style="background:#d5a943;color:#111;padding:12px 20px;text-decoration:none;font-weight:bold;border-radius:4px;">Reset My Password</a></p>
+                <p>Or copy this link: {reset_link}</p>
+                <p>This link expires in 1 hour.</p>
+                <p>If you did not request this, please ignore this email.</p>
+                <br>
+                <p>Blessings,<br>HPF Family Team</p>
+            </div>
+            """
+        })
+    except Exception as e:
+        print("Email error:", e)
+        return jsonify(error="Could not send email. Please try again later."), 500
+
+    return jsonify(ok=True, message="If an account exists, a reset link has been sent to your email.")
+
+@app.post("/api/reset-password")
+def reset_password():
+    d = request.get_json(force=True)
+    token = d.get("token", "").strip()
+    new_password = d.get("password", "")
+
+    if not token or len(new_password) < 8:
+        return jsonify(error="Token and password (min 8 characters) are required"), 400
+
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM members WHERE reset_token = %s", (token,))
+            member = cur.fetchone()
+
+            if not member:
+                return jsonify(error="Invalid or expired reset link"), 400
+
+            expires = member.get("reset_expires")
+            if not expires or datetime.fromisoformat(expires) < datetime.utcnow():
+                return jsonify(error="Reset link has expired. Please request a new one."), 400
+
+            # Update password and clear token
+            cur.execute("""
+                UPDATE members 
+                SET password_hash = %s, reset_token = NULL, reset_expires = NULL 
+                WHERE id = %s
+            """, (hp(new_password), member["id"]))
+            conn.commit()
+
+    return jsonify(ok=True, message="Password updated successfully. You can now log in.")
+
+# ========== OTHER API ROUTES ==========
 @app.post("/api/applications")
 def applications():
     d = request.get_json(force=True)
@@ -327,45 +419,9 @@ def add_program():
             conn.commit()
     return jsonify(ok=True), 201
 
-@app.get("/make-admin-now-hpf2026")
-@app.get("/make-admin-now-hpf2026")
-def make_admin_now():
-    try:
-        with get_db() as conn:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    UPDATE members 
-                    SET role = 'admin', 
-                        password_hash = %s,
-                        name = %s,
-                        campus = %s,
-                        connection = %s
-                    WHERE phone = %s
-                """, (
-                    hp("HPFFAMILY001"),
-                    "HPFFAMILY",
-                    "HPF Family",
-                    "HPF Leadership",
-                    "07025329640"
-                ))
-                if cur.rowcount == 0:
-                    cur.execute("""
-                        INSERT INTO members (name, phone, email, campus, connection, password_hash, role, created_at)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                    """, (
-                        "HPFFAMILY",
-                        "07025329640",
-                        None,
-                        "HPF Family",
-                        "HPF Leadership",
-                        hp("HPFFAMILY001"),
-                        "admin",
-                        datetime.utcnow().isoformat()
-                    ))
-                conn.commit()
-        return "SUCCESS! Admin ready. Login with 07025329640 / HPFFAMILY001"
-    except Exception as e:
-        return f"Error: {str(e)}"
+@app.get("/health")
+def health():
+    return jsonify(status="ok", service="HPF Family")
 
 @app.route("/")
 def home():
@@ -375,51 +431,10 @@ def home():
 def static_file(path):
     return send_from_directory(BASE, path)
 
-# Create tables on startup and seed admin
+# Create tables on startup
 with app.app_context():
     if DATABASE_URL:
         init_db()
-        # Seed / Update Admin Account
-        try:
-            with get_db() as conn:
-                with conn.cursor() as cur:
-                    cur.execute("SELECT id FROM members WHERE phone = %s", ("07025329640",))
-                    existing = cur.fetchone()
-                    if existing:
-                        # Update existing account to admin
-                        cur.execute("""
-                            UPDATE members 
-                            SET role = 'admin', 
-                                password_hash = %s, 
-                                name = %s,
-                                campus = %s,
-                                connection = %s
-                            WHERE phone = %s
-                        """, (
-                            hp("HPFFAMILY001"),
-                            "HPFFAMILY",
-                            "HPF Family",
-                            "HPF Leadership",
-                            "07025329640"
-                        ))
-                    else:
-                        cur.execute("""
-                            INSERT INTO members (name, phone, email, campus, connection, password_hash, role, created_at)
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                        """, (
-                            "HPFFAMILY",
-                            "07025329640",
-                            None,
-                            "HPF Family",
-                            "HPF Leadership",
-                            hp("HPFFAMILY001"),
-                            "admin",
-                            datetime.utcnow().isoformat()
-                        ))
-                    conn.commit()
-                    print("Admin account ready")
-        except Exception as e:
-            print("Admin seed error:", e)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
