@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HPF Programs — HPF Family</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap');
+:root{--bg:#f3eee4;--ink:#11100e;--black:#070707;--gold:#d8aa4d;--muted:#777168;--line:#d3c9b7}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.6}
+a{text-decoration:none;color:inherit}.top{background:#111;color:#c7c0b5;text-align:center;font-size:10px;letter-spacing:.16em;padding:7px}
+header{height:82px;background:#080808;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 6%;position:sticky;top:0;z-index:10;border-bottom:1px solid #29251f}
+.brand{display:flex;align-items:center;gap:10px}.brand-mark{width:48px;height:48px;border:1px solid #765c2d;border-radius:50%;display:grid;place-items:center;color:var(--gold);font-family:'Playfair Display';font-size:20px;font-weight:700}
+.brand span{display:flex;flex-direction:column;line-height:1}.brand strong{letter-spacing:.18em;font-size:19px}.brand small{color:var(--gold);font-size:8px;letter-spacing:.32em;margin-top:4px}
+nav{display:flex;align-items:center;gap:20px;font-size:12px}nav a{color:#ccc}nav a:hover{color:var(--gold)}nav .gold{background:var(--gold);color:#111;padding:10px 14px;font-weight:700}
+.menu{display:none;background:none;color:white;border:0;font-size:25px}
+.hero{background:radial-gradient(circle at 78% 45%,#392914 0,transparent 28%),linear-gradient(125deg,#050505,#17130d);color:#fff;padding:90px 7% 85px}
+.eyebrow{font-size:10px;letter-spacing:.2em;font-weight:700;color:var(--gold)}h1,h2,h3{font-family:'Playfair Display',serif;line-height:1.05}
+h1{font-size:clamp(48px,6vw,82px);letter-spacing:-.04em;margin:15px 0 20px}h1 i,h2 i{color:var(--gold);font-style:italic}
+.sub{color:#b7b1a7;max-width:700px;font-size:17px}
+.section{padding:90px 7%}.intro{max-width:800px;margin-bottom:42px}.intro h2{font-size:clamp(42px,5vw,68px);margin:10px 0 18px}.intro p{color:#666057;font-size:17px}
+.calendar{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:#cfc5b5}
+.program{background:var(--bg);padding:30px;min-height:220px;position:relative}.program .month{font-size:10px;letter-spacing:.18em;color:#876525;font-weight:700}.program .number{position:absolute;right:25px;top:17px;font-family:'Playfair Display';font-size:36px;color:#c8bda9}
+.program h3{font-size:27px;margin:28px 0 9px}.program p{color:#716b63;font-size:13px;max-width:560px}.tag{display:inline-block;margin-top:14px;padding:6px 9px;border:1px solid #c9bda9;color:#795b22;font-size:9px;letter-spacing:.12em;font-weight:700}
+.program.recurring{background:#17130d;color:#fff}.program.recurring p{color:#aaa39a}.program.recurring .month,.program.recurring .tag{color:var(--gold)}.program.recurring .tag{border-color:#5c4b2d}
+.note{margin-top:28px;padding:20px 22px;border-left:3px solid var(--gold);background:#ebe3d5;color:#625c53;font-size:13px}
+.actions{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}.btn{display:inline-block;padding:13px 18px;font-size:11px;font-weight:700}.btn.gold{background:var(--gold);color:#111}.btn.black{background:#111;color:#fff}
+.contact{background:#080808;color:#fff;padding:80px 7%;display:grid;grid-template-columns:1fr 1fr;gap:10%;align-items:center}.contact h2{font-size:clamp(42px,5vw,62px);margin:0}.contact p{color:#aaa39a;max-width:600px}.contact-card{border:1px solid #40392e;padding:28px}.contact-card strong{font-family:'Playfair Display';font-size:24px}.contact-card small{display:block;color:var(--gold);margin:5px 0 20px}.contact-card a{display:inline-block;background:var(--gold);color:#111;padding:12px 15px;font-size:11px;font-weight:700;margin-right:8px;margin-top:6px}
+footer{background:#050505;color:#fff;padding:50px 7% 20px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}
+footer h3{font-family:'DM Sans';letter-spacing:.15em}footer p{color:var(--gold);font-family:'Playfair Display';font-style:italic}footer div{display:flex;flex-direction:column;gap:8px}footer div b{font-size:9px;letter-spacing:.15em;color:var(--gold);margin-bottom:8px}footer div a{font-size:12px;color:#969087}.copy{grid-column:1/-1;border-top:1px solid #26231f;padding-top:15px;font-size:10px;color:#777}
+@media(max-width:900px){nav{display:none;position:absolute;top:82px;left:0;right:0;background:#080808;padding:18px 6%;flex-direction:column;align-items:stretch}.open{display:flex}.menu{display:block}.contact{grid-template-columns:1fr}}
+@media(max-width:600px){.hero{padding:65px 6%}.section{padding:70px 6%}.calendar{grid-template-columns:1fr}footer{grid-template-columns:1fr 1fr}footer>div:first-child{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="top">HOSTEL PRAYER FELLOWSHIP · HPF FAMILY</div>
+
+<header>
+<a class="brand" href="index.html">
+<div class="brand-mark">HPF</div>
+<span><strong>HPF FAMILY</strong><small>HOSTEL PRAYER FELLOWSHIP</small></span>
+</a>
+<button class="menu" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+<nav>
+<a href="index.html">Home</a>
+<a href="about.html">About</a>
+<a href="programs.html">Programs</a>
+<a href="join.html">Join HPF</a>
+<a class="gold" href="https://incredible-gecko-e48a13.netlify.app/" target="_blank">HPF APP ↗</a>
+</nav>
+</header>
+
+<section class="hero">
+<div>
+<p class="eyebrow">HPF ANNUAL PROGRAMME</p>
+<h1>A Year of <i>Gathering & Fire</i></h1>
+<p class="sub">A rhythm of prayer, worship, fellowship, mission, spiritual growth and leadership that keeps the HPF Family connected throughout the year.</p>
+</div>
+</section>
+
+<main>
+<section class="section">
+<div class="intro">
+<p class="eyebrow" style="color:#856523">OUR PROGRAMS</p>
+<h2>Gather. Pray. <i>Grow.</i></h2>
+<p>These are the major recurring HPF programmes. Specific dates, venues, themes and times may be announced by HPF leadership each year.</p>
+</div>
+
+<div class="calendar">
+
+<article class="program">
+<div class="month">JANUARY</div><div class="number">01</div>
+<h3>Rising Of God's General</h3>
+<p>Our annual gathering focused on raising, strengthening and commissioning God's generals for Kingdom purpose and service.</p>
+<span class="tag">ANNUAL PROGRAMME</span>
+</article>
+
+<article class="program">
+<div class="month">FEBRUARY</div><div class="number">02</div>
+<h3>Love Feast</h3>
+<p>A special HPF family fellowship centred on love, unity, friendship and the expression of Christ's love.</p>
+<span class="tag">FELLOWSHIP</span>
+</article>
+
+<article class="program">
+<div class="month">EVERY SEMESTER END</div><div class="number">03</div>
+<h3>Examination Prayer Seal</h3>
+<p>A prayer gathering at the end of every semester where we commit our examinations and academic journey into God's hands.</p>
+<span class="tag">ACADEMIC & PRAYER</span>
+</article>
+
+<article class="program">
+<div class="month">MAY</div><div class="number">04</div>
+<h3>Fragrance Of Worship</h3>
+<p>A worship expression where the HPF Family gathers to exalt Jesus and minister to God through worship.</p>
+<span class="tag">WORSHIP</span>
+</article>
+
+<article class="program">
+<div class="month">JULY</div><div class="number">05</div>
+<h3>High School Concert</h3>
+<p>A special concert and outreach for high school students through Students Impact Mission.</p>
+<span class="tag">HIGH SCHOOL OUTREACH</span>
+</article>
+
+<article class="program">
+<div class="month">JULY</div><div class="number">06</div>
+<h3>A Night With The Holy Ghost</h3>
+<p>A night set apart for prayer, worship, the Word and fellowship with the Holy Spirit.</p>
+<span class="tag">HOLY GHOST NIGHT</span>
+</article>
+
+<article class="program">
+<div class="month">AUGUST</div><div class="number">07</div>
+<h3>Handing Over & Celebration Feast</h3>
+<p>A time to honour outgoing leaders, welcome incoming executives and celebrate God's faithfulness to the HPF Family.</p>
+<span class="tag">LEADERSHIP & CELEBRATION</span>
+</article>
+
+<article class="program recurring">
+<div class="month">EVERY THIRD WEEK</div><div class="number">08</div>
+<h3>Monthly Vigil</h3>
+<p>HPF gathers every third week of the month for an extended time of prayer, seeking God and strengthening the altar.</p>
+<span class="tag">RECURRING MONTHLY</span>
+</article>
+
+</div>
+
+<div class="note"><strong>Programme note:</strong> Exact dates, venues, themes and times may vary each year. Official announcements will be made by HPF leadership. The Monthly Vigil remains a recurring programme every third week of the month.</div>
+
+<div class="actions">
+<a class="btn gold" href="join.html">JOIN HPF ↗</a>
+<a class="btn black" href="https://wa.me/2349164958696" target="_blank">ASK ABOUT A PROGRAMME ↗</a>
+</div>
+</section>
+
+<section class="contact">
+<div>
+<p class="eyebrow">NEED INFORMATION?</p>
+<h2>Connect with the <i>HPF Family.</i></h2>
+<p>For programme enquiries, executive opportunities, starting an HPF hostel fellowship, or other HPF information, contact the General Secretary.</p>
+</div>
+<div class="contact-card">
+<strong>HPF General Secretary</strong>
+<small>EXECUTIVE CONTACT · WHATSAPP</small>
+<a href="https://wa.me/2349164958696" target="_blank">WHATSAPP ↗</a>
+<a href="tel:+2349164958696">CALL ↗</a>
+</div>
+</section>
+</main>
+
+<footer>
+<div><h3>HPF FAMILY</h3><p>A family raised around the altar.</p></div>
+<div><b>EXPLORE</b><a href="index.html">Home</a><a href="about.html">About</a><a href="programs.html">Programs</a></div>
+<div><b>CONNECT</b><a href="join.html">Join HPF</a><a href="https://wa.me/2349164958696" target="_blank">General Secretary</a><a href="https://incredible-gecko-e48a13.netlify.app/" target="_blank">HPF App</a></div>
+<div><b>HPF</b><a href="index.html">HPF Family</a><a href="programs.html">Annual Programmes</a></div>
+<div class="copy">© HPF Family · Hostel Prayer Fellowship. All rights reserved.</div>
+</footer>
+</body>
+</html>
