@@ -244,8 +244,7 @@ def forgot_password():
 
         # Send email
         reset_link = f"https://hpf-family-website.onrender.com/reset.html?token={token}"
-        email_to = member.get("email") or "hostelprayerfellowship001@gmail.com"
-
+        email_to = "adebiyihammed6@gmail.com"   # temporary for testing
         try:
             resend.Emails.send({
                 "from": FROM_EMAIL,
