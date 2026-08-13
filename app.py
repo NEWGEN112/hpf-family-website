@@ -231,11 +231,17 @@ def forgot_password():
     token = secrets.token_urlsafe(32)
     expires = (datetime.utcnow() + timedelta(hours=1)).isoformat()
 
-    with get_db() as conn:
-        with conn.cursor() as cur:
-            cur.execute("UPDATE members SET reset_token = %s, reset_expires = %s WHERE id = %s",
-                        (token, expires, member["id"]))
-            conn.commit()
+    try:
+        with get_db() as conn:
+            with conn.cursor() as cur:
+                # Make sure columns exist
+                cur.execute("ALTER TABLE members ADD COLUMN IF NOT EXISTS reset_token TEXT")
+                cur.execute("ALTER TABLE members ADD COLUMN IF NOT EXISTS reset_expires TEXT")
+                cur.execute("UPDATE members SET reset_token = %s, reset_expires = %s WHERE id = %s",
+                            (token, expires, member["id"]))
+                conn.commit()
+    except Exception as e:
+        return jsonify(error=f"Database error: {str(e)}"), 500
 
     # Send email
     reset_link = f"https://hpf-family-website.onrender.com/reset.html?token={token}"
