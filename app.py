@@ -22,14 +22,14 @@ resend.api_key = os.environ.get("RESEND_API_KEY")
 FROM_EMAIL = os.environ.get("FROM_EMAIL", "onboarding@resend.dev")
 
 def get_db():
-    if "db" not in g:
+    if "db" not in g or g.db.closed:
         g.db = psycopg.connect(DATABASE_URL, row_factory=dict_row)
     return g.db
 
 @app.teardown_appcontext
 def close_db(_):
     db = g.pop("db", None)
-    if db is not None:
+    if db is not None and not db.closed:
         db.close()
 
 def init_db():
