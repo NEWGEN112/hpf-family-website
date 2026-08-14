@@ -1,12 +1,168 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HPF Leadership Dashboard</title>
-<style>body{margin:0;background:#f3eee4;color:#171512;font-family:Arial}.wrap{max-width:1200px;margin:auto;padding:30px 5%}.nav{display:flex;justify-content:space-between}.nav a{color:#171512;text-decoration:none}.hero{margin:60px 0 25px;background:#151412;color:#fff;padding:35px}.ey{font-size:10px;letter-spacing:.2em;color:#d5a943;font-weight:800}h1,h2{font-family:Georgia,serif}h1{font-size:55px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.stat,.panel{background:#fffaf1;border:1px solid #d0c5b4;padding:25px}.stat b{font-size:35px}.panel{margin-top:18px}table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:11px;border-bottom:1px solid #ddd;text-align:left}input,textarea{width:100%;padding:12px;box-sizing:border-box;margin:6px 0 12px;border:1px solid #bbb}button{background:#d5a943;border:0;padding:13px 18px;font-weight:800}@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}}\n</style></head><body><div class="wrap"><div class="nav"><b>🔥 HPF FAMILY · LEADERSHIP</b><a href="dashboard.html">Member View →</a></div><section class="hero"><div class="ey">ADMINISTRATION</div><h1>Lead the family.</h1><p>Members, applications, prayer requests, testimonies, announcements and programs.</p></section><div class="stats"><div class="stat"><small>MEMBERS</small><br><b id="m">—</b></div><div class="stat"><small>APPLICATIONS</small><br><b id="a">—</b></div><div class="stat"><small>PRAYER</small><br><b id="p">—</b></div><div class="stat"><small>TESTIMONIES</small><br><b id="t">—</b></div></div>
-<div class="panel"><h2>Recent Members</h2><div id="members">Loading...</div></div>
-<div class="panel"><h2>Applications</h2><div id="apps">Loading...</div></div>
-<div class="panel"><h2>Post Announcement</h2><input id="at" placeholder="Title"><textarea id="ab" placeholder="Announcement"></textarea><button onclick="postAnn()">POST ANNOUNCEMENT</button><span id="am"></span></div>
-<div class="panel"><h2>Add Program</h2><input id="pt" placeholder="Program title"><input id="pd" placeholder="Date"><input id="ptime" placeholder="Time"><input id="pv" placeholder="Venue"><textarea id="px" placeholder="Description"></textarea><button onclick="postProg()">ADD PROGRAM</button><span id="pm"></span></div>
-</div><script>
-async function load(){try{const o=await(await fetch('/api/admin/overview')).json();if(o.error){location.href='login.html';return}m.textContent=o.members;a.textContent=o.applications;p.textContent=o.prayer_requests;t.textContent=o.testimonies;
-const ms=await(await fetch('/api/admin/members')).json();members.innerHTML='<table><tr><th>Name</th><th>Phone</th><th>Campus</th><th>Hostel</th><th>Service</th></tr>'+ms.members.map(x=>`<tr><td>${x.name}</td><td>${x.phone}</td><td>${x.campus}</td><td>${x.hostel||'—'}</td><td>${x.service||'—'}</td></tr>`).join('')+'</table>';
-const as=await(await fetch('/api/admin/applications')).json();apps.innerHTML='<table><tr><th>Type</th><th>Name</th><th>Phone</th><th>Campus</th><th>Status</th></tr>'+as.applications.map(x=>`<tr><td>${x.kind}</td><td>${x.name}</td><td>${x.phone}</td><td>${x.campus}</td><td>${x.status}</td></tr>`).join('')+'</table>';
-}catch(e){}}async function postAnn(){const r=await fetch('/api/admin/announcements',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:at.value,body:ab.value})});am.textContent=r.ok?' Posted ✓':' Failed';load()}async function postProg(){const r=await fetch('/api/admin/programs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:pt.value,date:pd.value,time:ptime.value,venue:pv.value,description:px.value})});pm.textContent=r.ok?' Added ✓':' Failed';load()}load();
-</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HPF Leadership Dashboard</title>
+  <style>
+    body { margin:0; background:#f3eee4; color:#171512; font-family:Arial,sans-serif; }
+    .wrap { max-width:1100px; margin:auto; padding:25px 5% 60px; }
+    .nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; }
+    .nav a { color:#171512; text-decoration:none; font-size:13px; }
+    .brand { font-weight:900; }
+    .hero { background:#111; color:#fff; padding:30px; border-radius:12px; margin-bottom:25px; }
+    .ey { font-size:10px; letter-spacing:.2em; color:#d5a943; font-weight:800; }
+    h1 { font-family:Georgia,serif; font-size:clamp(32px,6vw,48px); margin:10px 0 5px; }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:25px; }
+    .stat { background:#fffaf0; border:1px solid #d0c5b4; padding:20px; border-radius:10px; text-align:center; }
+    .stat small { font-size:11px; color:#876525; letter-spacing:.1em; }
+    .stat b { display:block; font-size:32px; margin-top:8px; }
+    .panel { background:#fffaf0; border:1px solid #d0c5b4; padding:22px; border-radius:10px; margin-bottom:18px; }
+    .panel h2 { font-family:Georgia,serif; font-size:22px; margin:0 0 15px; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th { text-align:left; padding:10px 8px; border-bottom:2px solid #d0c5b4; color:#876525; font-size:11px; letter-spacing:.05em; }
+    td { padding:11px 8px; border-bottom:1px solid #e8e0d0; }
+    input, textarea { width:100%; padding:12px; box-sizing:border-box; margin:6px 0 12px; border:1px solid #bbb; border-radius:6px; font:inherit; }
+    button { background:#d5a943; border:0; padding:13px 20px; font-weight:800; border-radius:6px; cursor:pointer; }
+    .msg { margin-left:12px; font-size:13px; }
+    .ok { color:green; }
+    .err { color:#c00; }
+    .logout { background:#111; color:#fff; padding:8px 14px; border-radius:6px; font-size:12px; text-decoration:none; }
+    @media(max-width:700px) {
+      .stats { grid-template-columns:1fr 1fr; }
+      table { font-size:12px; }
+      th, td { padding:8px 5px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <div class="brand">🔥 HPF FAMILY · LEADERSHIP</div>
+      <div>
+        <a href="dashboard.html" style="margin-right:15px;">Member View</a>
+        <a href="#" id="logout" class="logout">Logout</a>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="ey">ADMINISTRATION</div>
+      <h1>Lead the Family</h1>
+      <p style="color:#bbb; margin:0;">Members, applications, prayer requests, testimonies, announcements & programs.</p>
+    </section>
+
+    <div class="stats">
+      <div class="stat"><small>MEMBERS</small><b id="m">—</b></div>
+      <div class="stat"><small>APPLICATIONS</small><b id="a">—</b></div>
+      <div class="stat"><small>PRAYER</small><b id="p">—</b></div>
+      <div class="stat"><small>TESTIMONIES</small><b id="t">—</b></div>
+    </div>
+
+    <div class="panel">
+      <h2>Recent Members</h2>
+      <div id="members">Loading...</div>
+    </div>
+
+    <div class="panel">
+      <h2>Applications</h2>
+      <div id="apps">Loading...</div>
+    </div>
+
+    <div class="panel">
+      <h2>Post Announcement</h2>
+      <input id="at" placeholder="Title">
+      <textarea id="ab" rows="3" placeholder="Write the announcement..."></textarea>
+      <button onclick="postAnn()">POST ANNOUNCEMENT</button>
+      <span id="am" class="msg"></span>
+    </div>
+
+    <div class="panel">
+      <h2>Add Program / Event</h2>
+      <input id="pt" placeholder="Program title">
+      <input id="pd" placeholder="Date (e.g. 20 Aug 2026)">
+      <input id="ptime" placeholder="Time">
+      <input id="pv" placeholder="Venue">
+      <textarea id="px" rows="2" placeholder="Short description"></textarea>
+      <button onclick="postProg()">ADD PROGRAM</button>
+      <span id="pm" class="msg"></span>
+    </div>
+  </div>
+
+  <script>
+    async function load() {
+      try {
+        const o = await (await fetch('/api/admin/overview')).json();
+        if (o.error) { location.href = 'login.html'; return; }
+        document.getElementById('m').textContent = o.members;
+        document.getElementById('a').textContent = o.applications;
+        document.getElementById('p').textContent = o.prayer_requests;
+        document.getElementById('t').textContent = o.testimonies;
+
+        const ms = await (await fetch('/api/admin/members')).json();
+        document.getElementById('members').innerHTML = `
+          <table>
+            <tr><th>Name</th><th>Phone</th><th>Campus</th><th>Hostel</th><th>Service</th><th>Role</th></tr>
+            ${ms.members.map(x => `
+              <tr>
+                <td>${x.name}</td>
+                <td>${x.phone}</td>
+                <td>${x.campus || '—'}</td>
+                <td>${x.hostel || '—'}</td>
+                <td>${x.service || '—'}</td>
+                <td>${x.role || 'member'}</td>
+              </tr>`).join('')}
+          </table>`;
+
+        const as = await (await fetch('/api/admin/applications')).json();
+        document.getElementById('apps').innerHTML = `
+          <table>
+            <tr><th>Type</th><th>Name</th><th>Phone</th><th>Campus</th><th>Status</th></tr>
+            ${as.applications.map(x => `
+              <tr>
+                <td>${x.kind}</td>
+                <td>${x.name}</td>
+                <td>${x.phone}</td>
+                <td>${x.campus || '—'}</td>
+                <td>${x.status}</td>
+              </tr>`).join('')}
+          </table>`;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function postAnn() {
+      const r = await fetch('/api/admin/announcements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: at.value, body: ab.value })
+      });
+      am.className = 'msg ' + (r.ok ? 'ok' : 'err');
+      am.textContent = r.ok ? 'Posted successfully ✓' : 'Failed';
+      if (r.ok) { at.value = ''; ab.value = ''; load(); }
+    }
+
+    async function postProg() {
+      const r = await fetch('/api/admin/programs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: pt.value, date: pd.value, time: ptime.value,
+          venue: pv.value, description: px.value
+        })
+      });
+      pm.className = 'msg ' + (r.ok ? 'ok' : 'err');
+      pm.textContent = r.ok ? 'Program added ✓' : 'Failed';
+      if (r.ok) { pt.value = pd.value = ptime.value = pv.value = px.value = ''; load(); }
+    }
+
+    document.getElementById('logout').onclick = async (e) => {
+      e.preventDefault();
+      await fetch('/api/logout', { method: 'POST' });
+      location.href = 'login.html';
+    };
+
+    load();
+  </script>
+</body>
+</html>
