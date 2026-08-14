@@ -4,4 +4,17 @@
   <a href="forgot.html" style="color:#d5a943; font-weight:bold; text-decoration:underline;">Forgot Password?</a>
 </p>
 <a class="link" href="member.html">Create an HPF account →</a></div></div>
-<script>document.getElementById('login').onsubmit=async e=>{e.preventDefault();const m=document.getElementById('msg');try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});const j=await r.json();if(!r.ok)throw Error(j.error);m.className='msg ok';m.textContent='Login successful. Opening your HPF dashboard...';setTimeout(()=>location.href='dashboard.html',500)}catch(x){m.className='msg';m.textContent=x.message}};</script></body></html>
+<script>document.getElementById('login').onsubmit=async e=>{e.preventDefault();const m=document.getElementById('msg');try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});const j=await r.json();if(!r.ok)throw Error(j.error);m.className='msg ok';m.textContent='Login successful. Opening your HPF dashboard...';setTimeout(()=>location.href='dashboard.html',500)}catch(x){m.className='msg';m.textContent=x.message}};</script><!-- FOLLOW HPF FAMILY -->
+<section style="background:#0a0a0a;color:#fff;padding:50px 20px;text-align:center;border-top:1px solid #2a2a2a;">
+  <div style="max-width:900px;margin:0 auto;">
+    <div style="font-size:11px;letter-spacing:3px;color:#d5a943;font-weight:700;margin-bottom:12px;">FOLLOW HPF FAMILY</div>
+    <h2 style="font-family:Georgia,serif;font-size:28px;margin:0 0 12px;color:#fff;">Stay Connected With Us</h2>
+    <p style="color:#999;margin:0 0 30px;font-size:14px;">Watch our teachings and join the family online.</p>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;">
+      <a href="https://youtube.com/@hpffamily" target="_blank" style="background:#FF0000;color:#fff;padding:13px 20px;border-radius:50px;text-decoration:none;font-weight:700;font-size:13px;">▶ YouTube</a>
+      <a href="https://www.instagram.com/hpffamily_2024" target="_blank" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;padding:13px 20px;border-radius:50px;text-decoration:none;font-weight:700;font-size:13px;">📷 Instagram</a>
+      <a href="https://t.me/+gHrRml7LnZk3MWI0" target="_blank" style="background:#0088cc;color:#fff;padding:13px 20px;border-radius:50px;text-decoration:none;font-weight:700;font-size:13px;">✈️ Telegram</a>
+      <a href="https://vm.tiktok.com/ZS9krwjtT5ycF-wBm2e/" target="_blank" style="background:#000;color:#fff;padding:13px 20px;border-radius:50px;text-decoration:none;font-weight:700;font-size:13px;border:1px solid #333;">🎵 TikTok</a>
+    </div>
+  </div>
+</section></body></html>
