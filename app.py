@@ -369,16 +369,16 @@ def testimony():
 @app.get("/api/admin/overview")
 @admin
 def overview():
-    with get_db() as conn:
-        with conn.cursor() as cur:
-            cur.execute("SELECT COUNT(*) AS c FROM members")
-            members = cur.fetchone()["c"]
-            cur.execute("SELECT COUNT(*) AS c FROM applications")
-            applications = cur.fetchone()["c"]
-            cur.execute("SELECT COUNT(*) AS c FROM prayer_requests")
-            prayer_requests = cur.fetchone()["c"]
-            cur.execute("SELECT COUNT(*) AS c FROM testimonies")
-            testimonies = cur.fetchone()["c"]
+    conn = get_db()
+    with conn.cursor() as cur:
+        cur.execute("SELECT COUNT(*) AS c FROM members")
+        members = cur.fetchone()["c"]
+        cur.execute("SELECT COUNT(*) AS c FROM applications")
+        applications = cur.fetchone()["c"]
+        cur.execute("SELECT COUNT(*) AS c FROM prayer_requests")
+        prayer_requests = cur.fetchone()["c"]
+        cur.execute("SELECT COUNT(*) AS c FROM testimonies")
+        testimonies = cur.fetchone()["c"]
     return jsonify(members=members, applications=applications, prayer_requests=prayer_requests, testimonies=testimonies)
 
 @app.get("/api/admin/members")
